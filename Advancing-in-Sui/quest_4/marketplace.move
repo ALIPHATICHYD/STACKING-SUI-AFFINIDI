@@ -121,4 +121,20 @@ module quest_4::marketplace {
             tx_context::sender(ctx)
         )
     }
+
+    // internal function to take profits from selling items on marketplace
+fun take_profits<COIN>(
+    marketplace: &mut Marketplace<COIN>,
+    ctx: &mut TxContext
+): Coin<COIN> {
+    table::remove<address, Coin<COIN>>(&mut marketplace.payments, tx_context::sender(ctx))
+}
+
+// call take_profits function and transfers Coin object to sender
+public entry fun take_profits_and_keep<COIN>(
+    marketplace: &mut Marketplace<COIN>,
+    ctx: &mut TxContext
+) {
+    transfer::public_transfer(take_profits(marketplace, ctx), tx_context::sender(ctx))
+}
 }
