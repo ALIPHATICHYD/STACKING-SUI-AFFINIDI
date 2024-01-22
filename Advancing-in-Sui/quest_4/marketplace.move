@@ -20,14 +20,22 @@ module quest_4::marketplace {
 
     // create new shared marketplace
     public entry fun create<COIN>(ctx: &mut TxContext) {
-    let id = object::new(ctx);
-    let items = bag::new(ctx);
-    let payments = table::new<address, Coin<COIN>>(ctx);
-    transfer::share_object(Marketplace<COIN> { 
-        id, 
-        items,
-        payments
-    })
-}
+        let id = object::new(ctx);
+        let items = bag::new(ctx);
+        let payments = table::new<address, Coin<COIN>>(ctx);
+        transfer::share_object(Marketplace<COIN> { 
+            id, 
+            items,
+            payments
+         })
+    }
+
+    // single listing which contains listed item and its price in COIN
+    // attach actual item as dynamic object field, so we dont define any item field here
+    struct Listing has key, store {
+        id: UID,
+        ask: u64,
+        owner: address
+    }
 
 }
