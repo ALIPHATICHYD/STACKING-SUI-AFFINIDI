@@ -38,4 +38,21 @@ module quest_4::marketplace {
         owner: address
     }
 
+    // listing an item at the marketplace
+    public entry fun list<T: key + store, COIN>(
+        marketplace: &mut Marketplace<COIN>,
+        item: T,
+        ask: u64,
+        ctx: &mut TxContext
+    ) {
+        let item_id = object::id(&item);
+        let listing = Listing {
+            id: object::new(ctx),
+            ask: ask,
+            owner: tx_context::sender(ctx),
+        };
+
+        ofield::add(&mut listing.id, true, item);
+        bag::add(&mut marketplace.items, item_id, listing)
+    }
 }
