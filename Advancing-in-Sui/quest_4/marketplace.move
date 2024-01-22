@@ -80,4 +80,45 @@ module quest_4::marketplace {
         let item = delist<T, COIN>(marketplace, item_id, ctx);
         transfer::public_transfer(item, tx_context::sender(ctx));
     }
+
+        // internal function to purchase item using known Listing
+    // payment is done in Coin<C>
+    // if conditions are correct, owner of item gets payment and buyer receives item
+    fun buy<T: key + store, COIN>(
+        marketplace: &mut Marketplace<COIN>,
+        item_id: ID,
+        paid: Coin<COIN>,
+    ): T {
+        let Listing { id, ask, owner } = bag::remove(&mut marketplace.items, item_id);
+
+        assert!(ask == coin::value(&paid), EAmountIncorrect);
+
+        // check if theres alr a Coin hanging, if yes, merge paid with it
+        // otherwise, attach paid to Marketplace under owner's address
+        if (table::contains<address, Coin<COIN>>(&marketplace.payments, owner)) {
+            coin::join(
+                table::borrow_mut<address, Coin<COIN>>(&mut marketplace.payments, owner),
+                paid
+            )
+        } else {
+            table::add(&mut marketplace.payments, owner, paid)
+        };
+
+        let item = ofield::remove(&mut id, true);
+        object::delete(id);
+        item
+    }
+
+    // call buy function and transfer item to sender
+    public entry fun buy_and_take<T: key + store, COIN>(
+        marketplace: &mut Marketplace<COIN>,
+        item_id: ID,
+        paid: Coin<COIN>,
+        ctx: &mut TxContext
+    ) {
+        transfer::public_transfer(
+            buy<T, COIN>(marketplace, item_id, paid),
+            tx_context::sender(ctx)
+        )
+    }
 }
