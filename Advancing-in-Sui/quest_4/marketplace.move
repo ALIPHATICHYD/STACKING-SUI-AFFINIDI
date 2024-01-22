@@ -55,4 +55,29 @@ module quest_4::marketplace {
         ofield::add(&mut listing.id, true, item);
         bag::add(&mut marketplace.items, item_id, listing)
     }
+
+    // internal function to remove listing and get item back, only owner can do
+    fun delist<T: key + store, COIN>(
+        marketplace: &mut Marketplace<COIN>,
+        item_id: ID,
+        ctx: &mut TxContext
+    ): T {
+        let Listing { id, owner, ask: _ } = bag::remove(&mut marketplace.items, item_id);
+
+        assert!(tx_context::sender(ctx) == owner, ENotOwner);
+
+        let item = ofield::remove(&mut id, true);
+        object::delete(id);
+        item
+    }
+
+    // call delist function and transfer item to sender
+    public entry fun delist_and_take<T: key + store, COIN>(
+        marketplace: &mut Marketplace<COIN>,
+        item_id: ID,
+        ctx: &mut TxContext
+    ) {
+        let item = delist<T, COIN>(marketplace, item_id, ctx);
+        transfer::public_transfer(item, tx_context::sender(ctx));
+    }
 }
