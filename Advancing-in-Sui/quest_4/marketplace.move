@@ -138,5 +138,4 @@ module quest_4::marketplace {
     ) {
         transfer::public_transfer(take_profits(marketplace, ctx), tx_context::sender(ctx))
     }
-
 }

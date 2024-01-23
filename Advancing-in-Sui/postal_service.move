@@ -85,5 +85,4 @@ module quest_1::postal_service{
             id: object::new(ctx)
         }, tx_context::sender(ctx))
     }
-
 }

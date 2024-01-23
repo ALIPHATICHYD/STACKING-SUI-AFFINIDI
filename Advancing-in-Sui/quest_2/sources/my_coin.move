@@ -26,5 +26,4 @@ module quest_2::eva{
     public entry fun burn(treasury_cap: &mut TreasuryCap<EVA>, coin: Coin<EVA>) {
         coin::burn(treasury_cap, coin);
     }
-
 }
