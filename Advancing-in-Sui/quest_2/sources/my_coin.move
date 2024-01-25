@@ -7,6 +7,7 @@ module quest_2::eva{
     // insert EVA struct
     struct EVA has drop {}
 
+
     // insert module initializer
     fun init(witness: EVA, ctx: &mut TxContext) {
     let (treasury_cap, metadata) = coin::create_currency<EVA>(witness, 2, b"EVA", b"EVA", b"", option::none(), ctx);
