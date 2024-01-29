@@ -1,0 +1,11 @@
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Affinidi Login Integration Example</title>
+</head>
+<body>
+  <h1>Welcome {{session.email}}!</h1>
+  <p><a href="{% url 'logout' %}">Logout</a></p>
+  <div><pre>{{pretty}}</pre></div>
+</body>
+</html>
